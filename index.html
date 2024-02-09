@@ -117,9 +117,6 @@
                 continue;
             }
             __[item.val] = true;
-            if (item.end) {
-                return;
-            }
             if (item.wall) {
                 continue
             }
@@ -142,20 +139,24 @@
 
         for (let i = 1; i <= m; i++) {
             for (let j = 1; j <= n; j++) {
-                if (tree[`${i + 1}${j}`]) {
-                    tree[`${i}${j}`][`${i + 1}${j}`] = graph[i + 1][j].wall ? 999 : 1;
+                if (graph[i][j].wall) {
+                    continue
                 }
-                if (tree[`${i}${j + 1}`]) {
-                    tree[`${i}${j}`][`${i}${j + 1}`] = graph[i][j + 1].wall ? 999 : 1;
+                if (tree[`${i + 1}${j}`] && !graph[i + 1][j].wall) {
+                    tree[`${i}${j}`][`${i + 1}${j}`] = 1;
                 }
-                if (tree[`${i - 1}${j}`]) {
-                    tree[`${i}${j}`][`${i + 1}${j}`] = graph[i - 1][j].wall ? 999 : 1;
+                if (tree[`${i}${j + 1}`] && !graph[i][j + 1].wall) {
+                    tree[`${i}${j}`][`${i}${j + 1}`] = 1;
                 }
-                if (tree[`${i}${j - 1}`]) {
-                    tree[`${i}${j}`][`${i}${j + 1}`] = graph[i][j - 1].wall ? 999 : 1;
+                if (tree[`${i - 1}${j}`] && !graph[i - 1][j].wall) {
+                    tree[`${i}${j}`][`${i + 1}${j}`] = 1;
+                }
+                if (tree[`${i}${j - 1}`] && !graph[i][j - 1].wall) {
+                    tree[`${i}${j}`][`${i}${j + 1}`] = 1;
                 }
             }
         }
+        console.log({ tree })
         let queue = [{ key: "11", val: tree[11] }];
         let marked = [];
         let dist = [];
@@ -176,9 +177,6 @@
             }
             marked[item.key] = true;
             for (let _key in item.val) {
-                if (item.val[_key] == 999) {
-                    continue
-                }
                 if (dist[_key] > dist[item.key] + item.val[_key]) {
                     dist[_key] = dist[item.key] + item.val[_key]
                     queue.push({ key: _key, val: tree[_key] })
